@@ -1,0 +1,31 @@
+﻿@page
+@model FinPlan.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<h1>💰 Добро пожаловать в FinPlan</h1>
+
+<!-- Курсы валют -->
+<div class="card">
+    <div class="card-header">💱 Курсы валют</div>
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Валюта</th>
+                    <th>Курс</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var rate in Model.CurrencyRates)
+                {
+                    <tr>
+                        <td>@rate.Name</td>
+                        <td>@rate.Rate ₽</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

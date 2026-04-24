@@ -1,0 +1,36 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Папки сборки
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+
+# Пользовательские настройки
+appsettings.Development.json
+appsettings.Production.json
+*.userprefs
+
+# База данных (если локальная)
+*.mdf
+*.ldf
+App_Data/
+
+# Секреты и ключи
+**/appsettings.*.json
+!appsettings.json
+**/secrets.json
+**/.env
+
+# Логи
+*.log
+logs/
+
+# Временные файлы
+*.tmp
+*.temp

@@ -1,0 +1,59 @@
+﻿@page "{id:int}"
+@model FinPlan.Web.Pages.Transactions.EditModel
+@{
+    ViewData["Title"] = "Редактировать транзакцию";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Transaction.Id" />
+
+            <div class="form-floating mb-3">
+                <select asp-for="Transaction.Type" class="form-control">
+                    <option value="Income">Доход</option>
+                    <option value="Expense">Расход</option>
+                </select>
+                <label asp-for="Transaction.Type">Тип</label>
+                <span asp-validation-for="Transaction.Type" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Transaction.Amount" class="form-control" />
+                <label asp-for="Transaction.Amount">Сумма (₽)</label>
+                <span asp-validation-for="Transaction.Amount" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Transaction.Category" class="form-control" />
+                <label asp-for="Transaction.Category">Категория</label>
+                <span asp-validation-for="Transaction.Category" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Transaction.Date" class="form-control" type="date" />
+                <label asp-for="Transaction.Date">Дата</label>
+                <span asp-validation-for="Transaction.Date" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <textarea asp-for="Transaction.Description" class="form-control" rows="3"></textarea>
+                <label asp-for="Transaction.Description">Описание</label>
+                <span asp-validation-for="Transaction.Description" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+                <a asp-page="Index" class="btn btn-secondary">↩️ Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

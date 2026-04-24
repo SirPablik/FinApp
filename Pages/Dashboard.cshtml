@@ -1,0 +1,218 @@
+﻿@page
+@model FinPlan.Web.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Дашборд";
+    ViewData["page"] = "Dashboard";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<!-- Статистика -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">💰 Баланс</h5>
+                <h3>@Model.Balance.ToString("N2") ₽</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">📈 Доходы (мес)</h5>
+                <h3>@Model.MonthIncome.ToString("N2") ₽</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title">📉 Расходы (мес)</h5>
+                <h3>@Model.MonthExpense.ToString("N2") ₽</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">📊 Инвестиции</h5>
+                <h3>@Model.InvestmentValue.ToString("N2") ₽</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Уведомления о бюджетах -->
+@if (Model.BudgetNotifications.Any())
+{
+    <div class="row mb-4">
+        <div class="col-12">
+            @foreach (var notification in Model.BudgetNotifications)
+            {
+                <div class="alert alert-@notification.Level alert-dismissible fade show" role="alert">
+                    <strong>⚠️ @notification.Message</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- Графики -->
+<div class="row mb-4">
+    <!-- Расходы по категориям -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">📊 Расходы по категориям</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" height="300"></canvas>
+                @if (!Model.ExpenseByCategory.Any())
+                {
+                    <p class="text-muted text-center mb-0">Нет данных для отображения</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Доходы/Расходы по месяцам -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">📈 Динамика по месяцам</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthChart" height="300"></canvas>
+                @if (!Model.IncomeExpenseByMonth.Any())
+                {
+                    <p class="text-muted text-center mb-0">Нет данных для отображения</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Быстрые действия -->
+<div class="mb-4">
+    <h4>⚡ Быстрые действия</h4>
+    <a asp-page="/Transactions/Create" class="btn btn-primary m-1">➕ Транзакция</a>
+    <a asp-page="/Budgets/Create" class="btn btn-success m-1">📊 Бюджет</a>
+    <a asp-page="/Investments/Create" class="btn btn-info m-1">📈 Инвестиция</a>
+</div>
+
+<!-- Последние транзакции -->
+<div>
+    <h4>📋 Последние транзакции</h4>
+    @if (Model.RecentTransactions.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Дата</th>
+                    <th>Тип</th>
+                    <th>Категория</th>
+                    <th>Сумма</th>
+                    <th>Описание</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var t in Model.RecentTransactions)
+                {
+                    <tr>
+                        <td>@t.Date.ToString("dd.MM.yyyy")</td>
+                        <td>@(t.Type == "Income" ? "Доход" : "Расход")</td>
+                        <td>@t.Category</td>
+                        <td class="@(t.Type == "Income" ? "text-success" : "text-danger")">
+                            @(t.Type == "Income" ? "+" : "-")@t.Amount.ToString("N2") ₽
+                        </td>
+                        <td>@t.Description</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <a asp-page="/Transactions/Index" class="btn btn-outline-primary">Все транзакции →</a>
+    }
+    else
+    {
+        <p class="text-muted">Нет транзакций. <a asp-page="/Transactions/Create">Добавить первую</a></p>
+    }
+</div>
+
+@section Scripts {
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Данные для графиков из C#
+            const categoryData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseByCategory));
+            const monthData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.IncomeExpenseByMonth));
+
+            // График "Расходы по категориям" (только если есть данные)
+            if (categoryData && categoryData.length > 0) {
+                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                new Chart(categoryCtx, {
+                    type: 'doughnut',
+                     {
+                        labels: categoryData.map(x => x.category),
+                        datasets: [{
+                            data: categoryData.map(x => x.amount),
+                            backgroundColor: [
+                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                                '#FF9F40', '#FF6384', '#C9CBCF', '#4BC0C0', '#9966FF'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // График "Доходы/Расходы по месяцам" (только если есть данные)
+            if (monthData && monthData.length > 0) {
+                const monthCtx = document.getElementById('monthChart').getContext('2d');
+                new Chart(monthCtx, {
+                    type: 'bar',
+                     {
+                        labels: monthData.map(x => x.month),
+                        datasets: [
+                            {
+                                label: 'Доходы',
+                                 monthData.map(x => x.income),
+                                backgroundColor: '#4CAF50',
+                                borderColor: '#45a049',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Расходы',
+                                 monthData.map(x => x.expense),
+                                backgroundColor: '#F44336',
+                                borderColor: '#da190b',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

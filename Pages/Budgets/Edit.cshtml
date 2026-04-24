@@ -1,0 +1,50 @@
+﻿@page "{id:int}"
+@model FinPlan.Web.Pages.Budgets.EditModel
+@{
+    ViewData["Title"] = "Редактировать бюджет";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Budget.Id" />
+
+            <div class="form-floating mb-3">
+                <input asp-for="Budget.Category" class="form-control" />
+                <label asp-for="Budget.Category">Категория</label>
+                <span asp-validation-for="Budget.Category" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Budget.Limit" class="form-control" type="number" step="0.01" />
+                <label asp-for="Budget.Limit">Лимит (₽)</label>
+                <span asp-validation-for="Budget.Limit" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Budget.StartDate" class="form-control" type="date" />
+                <label asp-for="Budget.StartDate">Дата начала</label>
+                <span asp-validation-for="Budget.StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Budget.EndDate" class="form-control" type="date" />
+                <label asp-for="Budget.EndDate">Дата окончания</label>
+                <span asp-validation-for="Budget.EndDate" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+                <a asp-page="Index" class="btn btn-secondary">↩️ Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

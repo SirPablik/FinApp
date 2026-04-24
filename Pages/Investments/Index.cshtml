@@ -1,0 +1,106 @@
+﻿@page
+@model FinPlan.Web.Pages.Investments.IndexModel
+@{
+    ViewData["Title"] = "Инвестиции";
+    ViewData["page"] = "Investments";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">➕ Добавить актив</a>
+    <a asp-page="Index" asp-page-handler="Export" class="btn btn-success">📊 Экспорт в CSV</a>
+</p>
+
+<!-- Форма фильтров -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">🔍 Фильтры</h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <!-- Поиск -->
+            <div class="col-md-3">
+                <label class="form-label">Поиск</label>
+                <input type="text" name="SearchTerm" class="form-control" placeholder="Название актива..." value="@Model.SearchTerm" />
+            </div>
+
+            <!-- Тип актива -->
+            <div class="col-md-3">
+                <label class="form-label">Тип актива</label>
+                <select name="AssetTypeFilter" class="form-select">
+                    <option value="">Все</option>
+                    @foreach (var type in Model.AssetTypes)
+                    {
+                        <option value="@type" selected="@(type == Model.AssetTypeFilter)">@type</option>
+                    }
+                </select>
+            </div>
+
+            <!-- Дата от -->
+            <div class="col-md-2">
+                <label class="form-label">Дата от</label>
+                <input type="date" name="DateFrom" class="form-control" value="@(Model.DateFrom?.ToString("yyyy-MM-dd"))" />
+            </div>
+
+            <!-- Дата до -->
+            <div class="col-md-2">
+                <label class="form-label">Дата до</label>
+                <input type="date" name="DateTo" class="form-control" value="@(Model.DateTo?.ToString("yyyy-MM-dd"))" />
+            </div>
+
+            <!-- Кнопки -->
+            <div class="col-md-2 d-flex align-items-end gap-2">
+                <button type="submit" class="btn btn-primary">🔍</button>
+            </div>
+        </form>
+
+        <!-- Кнопка сброса -->
+        @if (!string.IsNullOrEmpty(Model.SearchTerm) || !string.IsNullOrEmpty(Model.AssetTypeFilter) || Model.DateFrom.HasValue || Model.DateTo.HasValue)
+        {
+            <div class="mt-3">
+                <a asp-page="Index" class="btn btn-outline-secondary btn-sm">🔄 Сбросить фильтры</a>
+                <span class="text-muted ms-2">Найдено: @Model.Investments.Count</span>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Таблица инвестиций -->
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Актив</th>
+            <th>Тип</th>
+            <th>Количество</th>
+            <th>Цена</th>
+            <th>Стоимость</th>
+            <th>Дата</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Investments)
+        {
+            <tr>
+                <td>@item.AssetName</td>
+                <td>@item.AssetType</td>
+                <td>@item.Quantity</td>
+                <td>@item.PurchasePrice.ToString("N2") ₽</td>
+                <td class="text-success fw-bold">@((item.Quantity * item.PurchasePrice).ToString("N2")) ₽</td>
+                <td>@item.PurchaseDate.ToString("dd.MM.yyyy")</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">✏️</a>
+                    <a asp-page="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">🗑️</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Investments.Any())
+{
+    <div class="alert alert-info">
+        <p>Нет инвестиций по выбранным фильтрам.</p>
+    </div>
+}

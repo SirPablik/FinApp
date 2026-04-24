@@ -1,0 +1,23 @@
+﻿@page "{id:int}"
+@model FinPlan.Web.Pages.Budgets.DeleteModel
+@{
+    ViewData["Title"] = "Удалить бюджет";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Вы уверены, что хотите удалить этот бюджет?</h3>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Категория:</strong> @Model.Budget.Category</p>
+        <p><strong>Лимит:</strong> @Model.Budget.Limit.ToString("N2") ₽</p>
+        <p><strong>Период:</strong> @Model.Budget.StartDate.ToString("dd.MM") - @Model.Budget.EndDate.ToString("dd.MM.yyyy")</p>
+    </div>
+</div>
+
+<form method="post" class="mt-4">
+    <input type="hidden" asp-for="Budget.Id" />
+    <button type="submit" class="btn btn-danger">🗑️ Удалить</button>
+    <a asp-page="Index" class="btn btn-secondary">↩️ Отмена</a>
+</form>

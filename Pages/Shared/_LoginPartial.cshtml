@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using FinPlan.Web.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle"></i> @User.Identity.Name
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">👤 @User.Identity.Name</h6></li>
+            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index"><i class="bi bi-person-gear"></i> Профиль</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="dropdown-item text-danger border-0 bg-transparent w-100 text-start px-3 py-2" style="cursor: pointer;">
+                        <i class="bi bi-box-arrow-right"></i> Выйти
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-sm me-2">Войти</a>
+    <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-outline-primary btn-sm">Регистрация</a>
+}

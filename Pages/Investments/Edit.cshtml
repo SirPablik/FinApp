@@ -1,0 +1,62 @@
+﻿@page "{id:int}"
+@model FinPlan.Web.Pages.Investments.EditModel
+@{
+    ViewData["Title"] = "Редактировать актив";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Investment.Id" />
+
+            <div class="form-floating mb-3">
+                <input asp-for="Investment.AssetName" class="form-control" />
+                <label asp-for="Investment.AssetName">Название актива</label>
+                <span asp-validation-for="Investment.AssetName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <select asp-for="Investment.AssetType" class="form-control">
+                    <option value="Stock">Акция</option>
+                    <option value="Bond">Облигация</option>
+                    <option value="Crypto">Криптовалюта</option>
+                    <option value="ETF">ETF</option>
+                    <option value="Other">Другое</option>
+                </select>
+                <label asp-for="Investment.AssetType">Тип актива</label>
+                <span asp-validation-for="Investment.AssetType" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Investment.Quantity" class="form-control" type="number" min="1" />
+                <label asp-for="Investment.Quantity">Количество</label>
+                <span asp-validation-for="Investment.Quantity" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Investment.PurchasePrice" class="form-control" type="number" step="0.01" min="0" />
+                <label asp-for="Investment.PurchasePrice">Цена (₽)</label>
+                <span asp-validation-for="Investment.PurchasePrice" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Investment.PurchaseDate" class="form-control" type="date" />
+                <label asp-for="Investment.PurchaseDate">Дата покупки</label>
+                <span asp-validation-for="Investment.PurchaseDate" class="text-danger"></span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+                <a asp-page="Index" class="btn btn-secondary">↩️ Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,169 @@
+﻿@page
+@model FinPlan.Web.Pages.IndexModel
+@{
+    ViewData["Title"] = "Главная";
+    ViewData["page"] = "Home";
+}
+
+<!-- Hero Section -->
+<div class="text-center mb-5">
+    <h1 class="display-4">💰 Добро пожаловать в FinPlan</h1>
+    <p class="lead text-muted">Ваш персональный финансовый помощник</p>
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="mt-4">
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-primary btn-lg me-2">🚀 Начать бесплатно</a>
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary btn-lg">Войти</a>
+        </div>
+    }
+</div>
+
+<!-- Курсы валют -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">💱 Курсы валют (ЦБ РФ)</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Валюта</th>
+                        <th>Код</th>
+                        <th>Курс (₽)</th>
+                        <th>Изменение</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var rate in Model.CurrencyRates)
+                    {
+                        <tr>
+                            <td>@rate.Name</td>
+                            <td><span class="badge bg-secondary">@rate.Code</span></td>
+                            <td class="fw-bold">@rate.Rate.ToString("N2") ₽</td>
+                            <td>
+                                @if (rate.Change >= 0)
+                                {
+                                    <span class="text-success">▲ @rate.Change.ToString("N2")</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger">▼ @rate.Change.ToString("N2")</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <small class="text-muted">Данные предоставлены Центральным Банком РФ</small>
+    </div>
+</div>
+
+<!-- Финансовые новости -->
+<div class="card mb-4">
+    <div class="card-header bg-dark text-white">
+        <h5 class="mb-0">📰 Финансовые новости</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            @foreach (var news in Model.News)
+            {
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 border-start border-4 border-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary">@news.Category</span>
+                                <small class="text-muted">@news.Date.ToString("dd.MM.yyyy")</small>
+                            </div>
+                            <h6 class="card-title">@news.Title</h6>
+                            <p class="card-text text-muted small">@news.Summary</p>
+                            <small class="text-muted">📌 @news.Source</small>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Быстрый доступ -->
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">⚡ Быстрый доступ</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-3">
+                    <a asp-page="/Dashboard" class="card text-center text-decoration-none h-100">
+                        <div class="card-body">
+                            <i class="bi bi-speedometer2 display-4 text-primary"></i>
+                            <h6 class="card-title mt-2">Дашборд</h6>
+                            <p class="card-text small text-muted">Обзор финансов</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a asp-page="/Transactions/Create" class="card text-center text-decoration-none h-100">
+                        <div class="card-body">
+                            <i class="bi bi-plus-circle display-4 text-success"></i>
+                            <h6 class="card-title mt-2">Транзакция</h6>
+                            <p class="card-text small text-muted">Добавить операцию</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a asp-page="/Budgets/Create" class="card text-center text-decoration-none h-100">
+                        <div class="card-body">
+                            <i class="bi bi-pie-chart display-4 text-info"></i>
+                            <h6 class="card-title mt-2">Бюджет</h6>
+                            <p class="card-text small text-muted">Создать бюджет</p>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <a asp-page="/Investments/Create" class="card text-center text-decoration-none h-100">
+                        <div class="card-body">
+                            <i class="bi bi-graph-up display-4 text-warning"></i>
+                            <h6 class="card-title mt-2">Инвестиции</h6>
+                            <p class="card-text small text-muted">Добавить актив</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Преимущества -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-shield-check display-4 text-success"></i>
+                <h5 class="card-title mt-3">Безопасно</h5>
+                <p class="card-text">Ваши данные защищены и хранятся локально</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-graph-up-arrow display-4 text-primary"></i>
+                <h5 class="card-title mt-3">Аналитика</h5>
+                <p class="card-text">Графики и отчёты для контроля финансов</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100">
+            <div class="card-body">
+                <i class="bi bi-phone display-4 text-info"></i>
+                <h5 class="card-title mt-3">Удобно</h5>
+                <p class="card-text">Работает на любом устройстве</p>
+            </div>
+        </div>
+    </div>
+</div>

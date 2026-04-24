@@ -1,0 +1,25 @@
+﻿@page "{id:int}"
+@model FinPlan.Web.Pages.Transactions.DeleteModel
+@{
+    ViewData["Title"] = "Удалить транзакцию";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Вы уверены, что хотите удалить эту транзакцию?</h3>
+
+<div class="card">
+    <div class="card-body">
+        <p><strong>Тип:</strong> @(Model.Transaction.Type == "Income" ? "Доход" : "Расход")</p>
+        <p><strong>Сумма:</strong> @Model.Transaction.Amount.ToString("N2") ₽</p>
+        <p><strong>Категория:</strong> @Model.Transaction.Category</p>
+        <p><strong>Дата:</strong> @Model.Transaction.Date.ToString("dd.MM.yyyy")</p>
+        <p><strong>Описание:</strong> @Model.Transaction.Description</p>
+    </div>
+</div>
+
+<form method="post" class="mt-4">
+    <input type="hidden" asp-for="Transaction.Id" />
+    <button type="submit" class="btn btn-danger">🗑️ Удалить</button>
+    <a asp-page="Index" class="btn btn-secondary">↩️ Отмена</a>
+</form>
